@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>AI Learning Path</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="gradient-bg"></div>
+
+<div class="app">
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <h2>🚀 AI Mentor</h2>
+
+    <ul>
+      <li class="active" onclick="showSection(this,'auth')">Login / Register</li>
+      <li onclick="showSection(this,'generate')">Generate Roadmap</li>
+      <li onclick="showSection(this,'dashboard')">My Dashboard</li>
+    </ul>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main">
+
+    <!-- Auth Section -->
+    <div id="auth" class="section active fade">
+      <div class="card">
+        <h2>Create Account</h2>
+        <input id="name" placeholder="Name">
+        <input id="email" placeholder="Email">
+        <input id="password" type="password" placeholder="Password">
+        <button onclick="register()">Register</button>
+      </div>
+
+      <div class="card">
+        <h2>Login</h2>
+        <input id="loginEmail" placeholder="Email">
+        <input id="loginPassword" type="password" placeholder="Password">
+        <button onclick="login()">Login</button>
+      </div>
+    </div>
+
+    <!-- Generate Section -->
+    <div id="generate" class="section fade">
+      <div class="card large">
+        <h2>Generate AI Roadmap ✨</h2>
+        <input id="skills" placeholder="Skills (HTML, Python)">
+        <input id="role" placeholder="Target Role">
+        <select id="level">
+          <option>Beginner</option>
+          <option>Intermediate</option>
+          <option>Advanced</option>
+        </select>
+        <button onclick="generate()">Generate</button>
+      </div>
+    </div>
+
+    <!-- Dashboard Section -->
+    <div id="dashboard" class="section fade">
+      <div class="card large">
+        <h2>📚 My Roadmap</h2>
+
+        <div class="progress-container">
+          <div id="progressFill"></div>
+          <span id="progressText">0%</span>
+        </div>
+
+        <input type="range" min="0" max="100" value="0"
+          id="progressSlider"
+          onchange="updateProgressUI(this.value)">
+
+        <div id="loader" class="loader hidden"></div>
+
+        <pre id="output">Your roadmap will appear here...</pre>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script src="script.js"></script>
+</body>
+</html>
