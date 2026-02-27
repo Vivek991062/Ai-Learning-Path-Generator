@@ -1,171 +1,196 @@
-const BASE = "http://127.0.0.1:5000/api";
-let token = localStorage.getItem("token") || null;
+// =============================
+// STABLE AI ROADMAP ENGINE
+// =============================
 
-/* =============================
-   SECTION SWITCH
-============================= */
-function showSection(el, id) {
+let completed = 0;
+let totalSteps = 0;
+
+// Role Database
+const roleDatabase = {
+  "penetration tester": [
+    "networking",
+    "linux",
+    "python",
+    "web security",
+    "nmap",
+    "burp suite",
+    "cryptography",
+    "owasp",
+    "ctf",
+    "scripting"
+  ],
+  "ai engineer": [
+    "python",
+    "data structures",
+    "machine learning",
+    "deep learning",
+    "tensorflow",
+    "statistics",
+    "linear algebra",
+    "projects"
+  ],
+  "frontend developer": [
+    "html",
+    "css",
+    "javascript",
+    "react",
+    "api",
+    "git",
+    "responsive design"
+  ]
+};
+
+// =============================
+// LOGIN SYSTEM
+// =============================
+
+function register() {
+  alert("Registered Successfully!");
+}
+
+function login() {
+  document.getElementById("authBox").classList.add("hidden");
+  document.getElementById("dashboard").classList.remove("hidden");
+}
+
+function logout() {
+  location.reload();
+}
+
+// =============================
+// SECTION SWITCH
+// =============================
+
+function showSection(sectionId) {
   document.querySelectorAll(".section").forEach(sec =>
     sec.classList.remove("active")
   );
-  document.getElementById(id).classList.add("active");
-
-  document.querySelectorAll(".sidebar li").forEach(li =>
-    li.classList.remove("active")
-  );
-  if (el) el.classList.add("active");
+  document.getElementById(sectionId).classList.add("active");
 }
 
-/* =============================
-   TOAST NOTIFICATION
-============================= */
-function showToast(msg, success = true) {
-  const toast = document.getElementById("toast");
-  toast.innerText = msg;
-  toast.style.background = success ? "#00f2fe" : "#ff4f4f";
-  toast.classList.add("show");
-  setTimeout(() => toast.classList.remove("show"), 3000);
-}
+// =============================
+// SMART ROLE MATCHING
+// =============================
 
-/* =============================
-   REGISTER
-============================= */
-async function register() {
-  try {
-    await fetch(BASE + "/register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name: name.value,
-        email: email.value,
-        password: password.value
-      })
-    });
+function findBestRoleMatch(userGoal) {
+  userGoal = userGoal.toLowerCase();
 
-    showToast("Account Created Successfully 🚀");
-  } catch {
-    showToast("Registration Failed ❌", false);
-  }
-}
-
-/* =============================
-   LOGIN
-============================= */
-async function login() {
-  try {
-    const res = await fetch(BASE + "/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        email: loginEmail.value,
-        password: loginPassword.value
-      })
-    });
-
-    const data = await res.json();
-
-    if (data.token) {
-      token = data.token;
-      localStorage.setItem("token", token);
-      showToast("Login Successful ✅");
-      showSection(null, "generate");
-    } else {
-      showToast("Invalid Credentials ❌", false);
+  for (let role in roleDatabase) {
+    if (userGoal.includes(role)) {
+      return role;
     }
-  } catch {
-    showToast("Login Error ❌", false);
   }
+
+  // fallback partial match
+  for (let role in roleDatabase) {
+    if (role.includes(userGoal) || userGoal.includes(role.split(" ")[0])) {
+      return role;
+    }
+  }
+
+  return null;
 }
 
-/* =============================
-   GENERATE ROADMAP
-============================= */
-async function generate() {
-  if (!token) {
-    showToast("Please Login First ❗", false);
+// =============================
+// MAIN AI ROADMAP FUNCTION
+// =============================
+
+function generateRoadmap() {
+
+  const goalInput = document.getElementById("goal").value.trim();
+  const level = document.getElementById("level").value;
+  const skillsInput = document.getElementById("skills").value;
+
+  const output = document.getElementById("roadmapOutput");
+  output.innerHTML = "";
+
+  if (!goalInput) {
+    output.innerHTML = "<p>⚠ Please enter your target role.</p>";
     return;
   }
 
-  document.getElementById("loader").classList.remove("hidden");
+  const matchedRole = findBestRoleMatch(goalInput);
 
-  try {
-    const res = await fetch(BASE + "/generate", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer " + token
-      },
-      body: JSON.stringify({
-        skills: skills.value,
-        role: role.value,
-        level: level.value
-      })
+  if (!matchedRole) {
+    output.innerHTML = "<p>⚠ Role not found. Try: Penetration Tester / AI Engineer / Frontend Developer</p>";
+    return;
+  }
+
+  const requiredSkills = roleDatabase[matchedRole];
+
+  const userSkills = skillsInput
+    .toLowerCase()
+    .split(",")
+    .map(skill => skill.trim())
+    .filter(skill => skill !== "");
+
+  const missingSkills = requiredSkills.filter(
+    skill => !userSkills.includes(skill)
+  );
+
+  if (missingSkills.length === 0) {
+    output.innerHTML = "<h2>🔥 You already match this role! Start applying now.</h2>";
+    return;
+  }
+
+  totalSteps = missingSkills.length;
+  completed = 0;
+  updateProgress();
+
+  // =============================
+  // PHASE LOGIC
+  // =============================
+
+  let phaseCount = level === "Beginner" ? 3 :
+                   level === "Intermediate" ? 2 : 1;
+
+  const chunkSize = Math.ceil(missingSkills.length / phaseCount);
+
+  for (let i = 0; i < phaseCount; i++) {
+
+    const phaseSkills = missingSkills.slice(i * chunkSize, (i + 1) * chunkSize);
+
+    if (phaseSkills.length === 0) continue;
+
+    const phaseTitle = document.createElement("h2");
+    phaseTitle.innerText = `🚀 Phase ${i + 1}`;
+    output.appendChild(phaseTitle);
+
+    phaseSkills.forEach(skill => {
+
+      const card = document.createElement("div");
+      card.className = "roadmap-card";
+
+      const weeks = Math.floor(Math.random() * 3) + 2;
+
+      card.innerHTML = `
+        <strong>${skill.toUpperCase()}</strong>
+        <p>Estimated Time: ${weeks} weeks</p>
+      `;
+
+      card.onclick = () => markComplete(card);
+
+      output.appendChild(card);
     });
-
-    const data = await res.json();
-
-    document.getElementById("loader").classList.add("hidden");
-
-    if (data.roadmap) {
-      typeWriterEffect(data.roadmap);
-      localStorage.setItem("savedRoadmap", data.roadmap);
-      showSection(null, "dashboard");
-      showToast("Roadmap Generated Successfully 🎉");
-    } else {
-      showToast("Generation Failed ❌", false);
-    }
-
-  } catch {
-    document.getElementById("loader").classList.add("hidden");
-    showToast("Server Error ❌", false);
   }
 }
 
-/* =============================
-   TYPE WRITER EFFECT
-============================= */
-function typeWriterEffect(text) {
-  const output = document.getElementById("output");
-  output.innerHTML = "";
-  let i = 0;
+// =============================
+// PROGRESS SYSTEM
+// =============================
 
-  function typing() {
-    if (i < text.length) {
-      output.innerHTML += text.charAt(i);
-      i++;
-      setTimeout(typing, 8);
-    }
+function markComplete(card) {
+  if (!card.classList.contains("done")) {
+    card.classList.add("done");
+    card.style.background = "#00c9a7";
+    completed++;
+    updateProgress();
   }
-
-  typing();
 }
 
-/* =============================
-   PROGRESS TRACKER
-============================= */
-function updateProgressUI(value) {
-  document.getElementById("progressFill").style.width = value + "%";
-  document.getElementById("progressText").innerText = value + "%";
-  localStorage.setItem("progressValue", value);
+function updateProgress() {
+  const percent = totalSteps === 0 ? 0 : (completed / totalSteps) * 100;
+  document.getElementById("progressFill").style.width = percent + "%";
+  document.getElementById("progressText").innerText =
+    percent.toFixed(0) + "% Completed";
 }
-
-/* =============================
-   LOAD SAVED STATE
-============================= */
-window.onload = function () {
-  const savedRoadmap = localStorage.getItem("savedRoadmap");
-  const savedProgress = localStorage.getItem("progressValue");
-
-  if (savedRoadmap) {
-    document.getElementById("output").innerText = savedRoadmap;
-  }
-
-  if (savedProgress) {
-    updateProgressUI(savedProgress);
-    document.getElementById("progressSlider").value = savedProgress;
-  }
-
-  if (token) {
-    showSection(null, "generate");
-  }
-};
