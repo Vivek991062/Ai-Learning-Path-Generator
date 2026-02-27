@@ -1,87 +1,71 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>AI Learning Path</title>
+  <meta charset="UTF-8">
+  <title>AI Learning Architect</title>
   <link rel="stylesheet" href="style.css">
+  <script defer src="script.js"></script>
 </head>
 <body>
 
-<div class="gradient-bg"></div>
+<div class="background"></div>
 
-<div class="app">
+<!-- LOGIN / REGISTER -->
+<div class="auth-container" id="authBox">
+  <div class="auth-card">
+    <h2>🚀 AI Learning Architect</h2>
 
-  <!-- Sidebar -->
-  <div class="sidebar">
-    <h2>🚀 AI Mentor</h2>
+    <input type="text" id="username" placeholder="Username">
+    <input type="password" id="password" placeholder="Password">
 
-    <ul>
-      <li class="active" onclick="showSection(this,'auth')">Login / Register</li>
-      <li onclick="showSection(this,'generate')">Generate Roadmap</li>
-      <li onclick="showSection(this,'dashboard')">My Dashboard</li>
-    </ul>
+    <button onclick="login()">Login</button>
+    <button class="register-btn" onclick="register()">Register</button>
   </div>
+</div>
 
-  <!-- Main Content -->
-  <div class="main">
+<!-- DASHBOARD -->
+<div class="dashboard hidden" id="dashboard">
 
-    <!-- Auth Section -->
-    <div id="auth" class="section active fade">
-      <div class="card">
-        <h2>Create Account</h2>
-        <input id="name" placeholder="Name">
-        <input id="email" placeholder="Email">
-        <input id="password" type="password" placeholder="Password">
-        <button onclick="register()">Register</button>
-      </div>
+  <aside class="sidebar">
+    <h2>⚡ AI Architect</h2>
+    <ul>
+      <li onclick="showSection('roadmap')">📚 Generate Roadmap</li>
+      <li onclick="showSection('progress')">📊 Progress</li>
+      <li onclick="logout()">🚪 Logout</li>
+    </ul>
+  </aside>
 
-      <div class="card">
-        <h2>Login</h2>
-        <input id="loginEmail" placeholder="Email">
-        <input id="loginPassword" type="password" placeholder="Password">
-        <button onclick="login()">Login</button>
-      </div>
-    </div>
+  <main class="main-content">
 
-    <!-- Generate Section -->
-    <div id="generate" class="section fade">
-      <div class="card large">
-        <h2>Generate AI Roadmap ✨</h2>
-        <input id="skills" placeholder="Skills (HTML, Python)">
-        <input id="role" placeholder="Target Role">
+    <!-- ROADMAP SECTION -->
+    <section id="roadmap" class="section active">
+      <h1>Create Your AI Learning Path</h1>
+
+      <div class="form-box">
+        <input type="text" id="goal" placeholder="Your Target (e.g. Penetration Tester)">
         <select id="level">
           <option>Beginner</option>
           <option>Intermediate</option>
           <option>Advanced</option>
         </select>
-        <button onclick="generate()">Generate</button>
+        <input type="text" id="skills" placeholder="Current Skills (comma separated)">
+        <button onclick="generateRoadmap()">Generate Path</button>
       </div>
-    </div>
 
-    <!-- Dashboard Section -->
-    <div id="dashboard" class="section fade">
-      <div class="card large">
-        <h2>📚 My Roadmap</h2>
+      <div id="roadmapOutput" class="roadmap-output"></div>
+    </section>
 
-        <div class="progress-container">
-          <div id="progressFill"></div>
-          <span id="progressText">0%</span>
-        </div>
-
-        <input type="range" min="0" max="100" value="0"
-          id="progressSlider"
-          onchange="updateProgressUI(this.value)">
-
-        <div id="loader" class="loader hidden"></div>
-
-        <pre id="output">Your roadmap will appear here...</pre>
+    <!-- PROGRESS SECTION -->
+    <section id="progress" class="section">
+      <h1>Your Progress</h1>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill"></div>
       </div>
-    </div>
+      <p id="progressText">0% Completed</p>
+    </section>
 
-  </div>
+  </main>
 </div>
 
-<div id="toast" class="toast"></div>
-
-<script src="script.js"></script>
 </body>
 </html>
