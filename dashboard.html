@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PathAI — Dashboard</title>
+  <link rel="stylesheet" href="css/dashboard.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+</head>
+<body>
+<nav class="topnav">
+  <div class="nav-brand">
+    <div class="brand-icon-sm">
+      <svg width="20" height="20" viewBox="0 0 32 32" fill="none">
+        <path d="M16 2L28 8V16C28 22.627 22.627 28 16 28C9.373 28 4 22.627 4 16V8L16 2Z" fill="url(#g1)"/>
+        <path d="M11 16L14.5 19.5L21 13" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <defs><linearGradient id="g1" x1="4" y1="2" x2="28" y2="28" gradientUnits="userSpaceOnUse"><stop stop-color="#6366f1"/><stop offset="1" stop-color="#8b5cf6"/></linearGradient></defs>
+      </svg>
+    </div>
+    <span class="nav-title">PathAI</span>
+  </div>
+  <div class="nav-actions">
+    <div class="user-chip">
+      <div class="user-avatar" id="nav-avatar">?</div>
+      <span id="nav-username">User</span>
+    </div>
+    <button class="theme-btn" id="theme-toggle" title="Toggle theme"><span class="theme-icon">🌙</span></button>
+    <button class="signout-btn" onclick="signOut()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+      Sign Out
+    </button>
+  </div>
+</nav>
+<div class="app-layout">
+  <aside class="sidebar">
+    <nav class="sidebar-nav">
+      <button class="nav-item active" data-view="dashboard" onclick="switchView('dashboard',this)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+        Dashboard
+      </button>
+      <button class="nav-item" data-view="roadmap" onclick="switchView('roadmap',this)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12h18M3 6l9-3 9 3M3 18l9 3 9-3"/></svg>
+        Roadmap
+      </button>
+      <button class="nav-item" data-view="progress" onclick="switchView('progress',this)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+        Progress
+      </button>
+    </nav>
+    <div class="sidebar-progress">
+      <div class="sp-label">Overall Progress</div>
+      <div class="sp-bar-wrap"><div class="sp-bar" id="sidebar-progress-bar" style="width:0%"></div></div>
+      <div class="sp-stat"><span id="sidebar-completed">0</span> / <span id="sidebar-total">0</span> topics</div>
+    </div>
+  </aside>
+  <main class="main-content">
+
+    <!-- DASHBOARD -->
+    <section class="view active" id="view-dashboard">
+      <div class="view-header">
+        <div><h2 class="view-title">Setup Your Learning Path</h2><p class="view-sub">Tell us about your goals and we'll build a personalized AI roadmap</p></div>
+        <div class="step-badge" id="step-badge">Step 1 of 4</div>
+      </div>
+      <div class="setup-step active" id="step-1">
+        <h3 class="step-title">🎯 What's your learning goal?</h3>
+        <p class="step-desc">Choose what you want to become or achieve</p>
+        <div class="goal-grid">
+          <div class="goal-card" data-goal="Full Stack Developer" onclick="selectGoal(this)"><div class="goal-emoji">💻</div><div class="goal-label">Full Stack Developer</div></div>
+          <div class="goal-card" data-goal="Frontend Developer" onclick="selectGoal(this)"><div class="goal-emoji">🎨</div><div class="goal-label">Frontend Developer</div></div>
+          <div class="goal-card" data-goal="Backend Developer" onclick="selectGoal(this)"><div class="goal-emoji">⚙️</div><div class="goal-label">Backend Developer</div></div>
+          <div class="goal-card" data-goal="Data Scientist" onclick="selectGoal(this)"><div class="goal-emoji">📊</div><div class="goal-label">Data Scientist</div></div>
+          <div class="goal-card" data-goal="Machine Learning Engineer" onclick="selectGoal(this)"><div class="goal-emoji">🤖</div><div class="goal-label">ML Engineer</div></div>
+          <div class="goal-card" data-goal="DevOps Engineer" onclick="selectGoal(this)"><div class="goal-emoji">🚀</div><div class="goal-label">DevOps Engineer</div></div>
+          <div class="goal-card" data-goal="Mobile App Developer" onclick="selectGoal(this)"><div class="goal-emoji">📱</div><div class="goal-label">Mobile Developer</div></div>
+          <div class="goal-card" data-goal="Cybersecurity Engineer" onclick="selectGoal(this)"><div class="goal-emoji">🔐</div><div class="goal-label">Cybersecurity</div></div>
+          <div class="goal-card" data-goal="Cloud Architect" onclick="selectGoal(this)"><div class="goal-emoji">☁️</div><div class="goal-label">Cloud Architect</div></div>
+          <div class="goal-card custom-goal-card" onclick="document.getElementById('custom-goal-input').focus()">
+            <div class="goal-emoji">✏️</div>
+            <input id="custom-goal-input" class="custom-goal-inp" type="text" placeholder="Custom goal..." oninput="selectCustomGoal(this)"/>
+          </div>
+        </div>
+        <button class="btn-next" id="btn-step1" disabled onclick="goToStep(2)">Continue →</button>
+      </div>
+      <div class="setup-step" id="step-2">
+        <h3 class="step-title">📈 What's your current skill level?</h3>
+        <p class="step-desc">Be honest — this helps calibrate the roadmap perfectly</p>
+        <div class="level-grid">
+          <div class="level-card" data-level="Complete Beginner" onclick="selectLevel(this)"><div class="level-icon">🌱</div><div class="level-name">Complete Beginner</div><div class="level-desc">No prior experience</div></div>
+          <div class="level-card" data-level="Beginner" onclick="selectLevel(this)"><div class="level-icon">🌿</div><div class="level-name">Beginner</div><div class="level-desc">Some basic understanding</div></div>
+          <div class="level-card" data-level="Intermediate" onclick="selectLevel(this)"><div class="level-icon">🌳</div><div class="level-name">Intermediate</div><div class="level-desc">Built some projects</div></div>
+          <div class="level-card" data-level="Advanced" onclick="selectLevel(this)"><div class="level-icon">🏔️</div><div class="level-name">Advanced</div><div class="level-desc">Strong foundation</div></div>
+        </div>
+        <div class="step-nav">
+          <button class="btn-back" onclick="goToStep(1)">← Back</button>
+          <button class="btn-next" id="btn-step2" disabled onclick="goToStep(3)">Continue →</button>
+        </div>
+      </div>
+      <div class="setup-step" id="step-3">
+        <h3 class="step-title">🛠️ What skills do you already have?</h3>
+        <p class="step-desc">Select all that apply — leave empty if starting fresh</p>
+        <div class="skills-wrap">
+          <div class="skills-tags" id="skills-tags">
+            <span class="skill-tag" onclick="toggleSkill(this)">HTML/CSS</span>
+            <span class="skill-tag" onclick="toggleSkill(this)">JavaScript</span>
+            <span class="skill-tag" onclick="toggleSkill(this)">Python</span>
+            <span class="skill-tag" onclick="toggleSkill(this)">Java</span>
+            <span class="skill-tag" onclick="toggleSkill(this)">C/C++</span>
+            <span class="skill-tag" onclick="toggleSkill(this)">React</span>
+            <span class="skill-tag" onclick="toggleSkill(this)">Node.js</span>
+            <span class="skill-tag" onclick="toggleSkill(this)">SQL</span>
+            <span class="skill-tag" onclick="toggleSkill(this)">Git</span>
+            <span class="skill-tag" onclick="toggleSkill(this)">Linux</span>
+            <span class="skill-tag" onclick="toggleSkill(this)">Docker</span>
+            <span class="skill-tag" onclick="toggleSkill(this)">REST APIs</span>
+            <span class="skill-tag" onclick="toggleSkill(this)">TypeScript</span>
+            <span class="skill-tag" onclick="toggleSkill(this)">Vue.js</span>
+            <span class="skill-tag" onclick="toggleSkill(this)">AWS</span>
+            <span class="skill-tag" onclick="toggleSkill(this)">MongoDB</span>
+          </div>
+          <div class="custom-skill-wrap">
+            <input type="text" id="custom-skill-input" placeholder="Add a custom skill..." class="custom-skill-inp"/>
+            <button onclick="addCustomSkill()" class="add-skill-btn">Add</button>
+          </div>
+        </div>
+        <div class="step-nav">
+          <button class="btn-back" onclick="goToStep(2)">← Back</button>
+          <button class="btn-next" onclick="goToStep(4)">Continue →</button>
+        </div>
+      </div>
+      <div class="setup-step" id="step-4">
+        <h3 class="step-title">📚 How do you prefer to learn?</h3>
+        <p class="step-desc">We'll include only the resources you prefer</p>
+        <div class="content-grid">
+          <div class="content-card" data-pref="notes" onclick="selectContent(this)"><div class="content-icon">📖</div><div class="content-name">Notes / Articles</div><div class="content-desc">W3Schools — read at your own pace</div></div>
+          <div class="content-card" data-pref="videos" onclick="selectContent(this)"><div class="content-icon">🎬</div><div class="content-name">Videos</div><div class="content-desc">YouTube tutorials — learn by watching</div></div>
+          <div class="content-card" data-pref="both" onclick="selectContent(this)"><div class="content-icon">⚡</div><div class="content-name">Both</div><div class="content-desc">Maximum coverage</div></div>
+        </div>
+        <div class="step-nav">
+          <button class="btn-back" onclick="goToStep(3)">← Back</button>
+          <button class="btn-next btn-generate" id="btn-generate" disabled onclick="generateRoadmap()">
+            <span id="gen-btn-text">✨ Generate My Roadmap</span>
+            <div class="spin hidden" id="gen-spin"></div>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ROADMAP -->
+    <section class="view" id="view-roadmap">
+      <div class="view-header">
+        <div><h2 class="view-title">Your Learning Roadmap</h2><p class="view-sub" id="roadmap-subtitle">AI-generated path tailored to your goals</p></div>
+        <button class="btn-regen" onclick="switchView('dashboard',document.querySelector('[data-view=dashboard]'));resetSetup()">🔄 New Roadmap</button>
+      </div>
+      <div class="roadmap-empty" id="roadmap-empty">
+        <div class="empty-icon">🗺️</div>
+        <h3>No roadmap yet</h3>
+        <p>Complete the setup in Dashboard to generate your personalized learning path</p>
+        <button class="btn-next" onclick="switchView('dashboard',document.querySelector('[data-view=dashboard]'))">Go to Dashboard →</button>
+      </div>
+      <div class="roadmap-content hidden" id="roadmap-content">
+        <div class="roadmap-meta" id="roadmap-meta"></div>
+        <div class="roadmap-phases" id="roadmap-phases"></div>
+      </div>
+    </section>
+
+    <!-- PROGRESS -->
+    <section class="view" id="view-progress">
+      <div class="view-header">
+        <div><h2 class="view-title">Your Progress</h2><p class="view-sub">Track your learning journey</p></div>
+      </div>
+      <div class="progress-empty" id="progress-empty">
+        <div class="empty-icon">📈</div>
+        <h3>No progress tracked yet</h3>
+        <p>Generate a roadmap and start learning to see your progress here</p>
+      </div>
+      <div class="progress-content hidden" id="progress-content">
+        <div class="progress-overview">
+          <div class="progress-stat-card"><div class="psc-value" id="prog-total-topics">0</div><div class="psc-label">Total Topics</div></div>
+          <div class="progress-stat-card"><div class="psc-value" id="prog-completed">0</div><div class="psc-label">Completed</div></div>
+          <div class="progress-stat-card"><div class="psc-value" id="prog-in-progress">0</div><div class="psc-label">In Progress</div></div>
+          <div class="progress-stat-card"><div class="psc-value" id="prog-percent">0%</div><div class="psc-label">Complete</div></div>
+        </div>
+        <div class="progress-bar-section">
+          <div class="pb-label">Overall Completion</div>
+          <div class="pb-track"><div class="pb-fill" id="prog-bar-fill" style="width:0%"></div></div>
+          <div class="pb-value" id="prog-bar-label">0%</div>
+        </div>
+        <div class="progress-list" id="progress-list"></div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- TRACKER MODAL -->
+<div class="modal-overlay hidden" id="tracker-modal">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3 id="modal-title">Opening Content</h3>
+      <button class="modal-close" onclick="closeTrackerModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="tracker-info" id="tracker-info"></div>
+      <div class="timer-display">
+        <div class="timer-circle">
+          <svg viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(99,102,241,0.15)" stroke-width="8"/>
+            <circle cx="50" cy="50" r="42" fill="none" stroke="url(#tg)" stroke-width="8" stroke-linecap="round" stroke-dasharray="264" stroke-dashoffset="264" id="timer-ring" style="transform:rotate(-90deg);transform-origin:50% 50%"/>
+            <defs><linearGradient id="tg" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#6366f1"/><stop offset="100%" stop-color="#8b5cf6"/></linearGradient></defs>
+          </svg>
+          <div class="timer-text">
+            <span id="timer-display">0:00</span>
+            <small id="timer-goal-label">/ 0:00</small>
+          </div>
+        </div>
+      </div>
+      <div class="tracker-status" id="tracker-status">Click "Open Content" to start</div>
+      <div class="modal-actions">
+        <button class="btn-open-content" onclick="openContentLink()">🔗 Open Content</button>
+        <button class="btn-mark-done" id="btn-mark-done" onclick="markTopicComplete()" disabled>✅ Mark as Complete</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- GENERATING OVERLAY -->
+<div class="generating-overlay hidden" id="gen-overlay">
+  <div class="gen-card">
+    <div class="gen-spinner"><div class="spinner-ring"></div><div class="spinner-icon">🤖</div></div>
+    <h3>Building Your Roadmap</h3>
+    <p id="gen-status">Analyzing your goals...</p>
+    <div class="gen-dots"><span></span><span></span><span></span></div>
+  </div>
+</div>
+
+<script src="js/dashboard.js"></script>
+</body>
+</html>
